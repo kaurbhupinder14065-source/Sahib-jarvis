@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>J.A.R.V.I.S</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--a:#00d4ff;--a2:#005577;--g:#ffc200;--r:#ff3c3c;--gr:#00ff88;--bg:#020d14;--p:rgba(0,25,45,0.95);--b:rgba(0,212,255,0.15);--t:#c8f0ff;--s:#4a8fa8}
+html,body{height:100%;width:100%;background:var(--bg);color:var(--t);font-family:'Rajdhani',sans-serif;overflow:hidden;user-select:none;-webkit-user-select:none}
+/* BG */
+.bg{position:fixed;inset:0;z-index:0;background:linear-gradient(135deg,#020d14 0%,#041520 50%,#020d14 100%)}
+.grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,212,255,.05)1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.05)1px,transparent 1px);background-size:40px 40px;animation:gp 6s ease-in-out infinite}
+@keyframes gp{0%,100%{opacity:.4}50%{opacity:.9}}
+.orb{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,.08),transparent 70%);animation:ob 4s ease-in-out infinite;z-index:0;pointer-events:none}
+@keyframes ob{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.1)}}
+
+/* LOCK */
+#LOCK{position:fixed;inset:0;z-index:500;background:rgba(2,13,20,.98);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.ll{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;color:var(--a);letter-spacing:.2em;text-shadow:0 0 30px var(--a);text-align:center;line-height:2}
+.ls{font-size:.45rem;letter-spacing:.25em;color:var(--s);display:block;font-weight:400}
+.lr{width:80px;height:80px;border-radius:50%;border:2px solid var(--a2);display:flex;align-items:center;justify-content:center;font-size:1.9rem;box-shadow:0 0 30px rgba(0,212,255,.3);animation:lrp 3s ease-in-out infinite}
+@keyframes lrp{0%,100%{box-shadow:0 0 20px rgba(0,212,255,.2)}50%{box-shadow:0 0 60px rgba(0,212,255,.6)}}
+.lh{font-size:.76rem;color:var(--s);text-align:center;max-width:220px;line-height:1.5}
+.lh b{color:var(--g)}
+#PIN{font-family:'Orbitron',sans-serif;font-size:2rem;letter-spacing:.7em;color:var(--a);min-height:2.5rem;text-align:center}
+#LERR{color:var(--r);font-size:.68rem;font-family:'Orbitron',sans-serif;letter-spacing:.1em;min-height:1.2rem;text-align:center}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:240px}
+.pk{background:rgba(0,212,255,.07);border:1px solid var(--b);color:var(--t);font-family:'Orbitron',sans-serif;font-size:1.1rem;padding:15px;border-radius:4px;cursor:pointer;transition:.15s}
+.pk:active{background:rgba(0,212,255,.3);border-color:var(--a);transform:scale(.93)}
+.pk.del{color:var(--r);border-color:rgba(255,60,60,.3)}
+.pk.go{color:var(--gr);border-color:rgba(0,255,136,.3)}
+
+/* APP */
+#APP{position:fixed;inset:0;z-index:1;display:none;flex-direction:column}
+
+/* HEADER */
+.hd{display:flex;align-items:center;justify-content:space-between;padding:11px 14px 9px;border-bottom:1px solid var(--b);background:rgba(2,13,20,.96);flex-shrink:0}
+.logo{font-family:'Orbitron',sans-serif;font-size:.95rem;font-weight:900;color:var(--a);letter-spacing:.18em;text-shadow:0 0 15px var(--a)}
+.logo .g{color:var(--g)}
+.hdr{display:flex;align-items:center;gap:6px}
+.pill{font-family:'Orbitron',sans-serif;font-size:.45rem;letter-spacing:.1em;color:var(--a);background:rgba(0,212,255,.08);border:1px solid var(--a2);border-radius:20px;padding:3px 9px;display:flex;align-items:center;gap:5px}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--a);box-shadow:0 0 5px var(--a);animation:bl 2s ease-in-out infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.2}}
+.hbtn{background:transparent;border:1px solid var(--b);color:var(--s);padding:4px 8px;border-radius:3px;cursor:pointer;font-size:.8rem}
+.hbtn:active{border-color:var(--a);color:var(--a)}
+
+/* HUD */
+.hud{display:flex;justify-content:space-between;padding:4px 14px;font-family:'Orbitron',sans-serif;font-size:.42rem;letter-spacing:.1em;color:var(--a2);border-bottom:1px solid var(--b);flex-shrink:0}
+
+/* VIEWS */
+#VIEWS{flex:1;overflow:hidden;position:relative}
+.vw{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.vw.on{display:flex}
+.vw::-webkit-scrollbar{width:2px}
+.vw::-webkit-scrollbar-thumb{background:var(--a2)}
+
+/* HOME */
+#vH{padding:10px 12px 70px;gap:9px}
+.clk{text-align:center;padding:16px 10px 12px;border:1px solid var(--b);background:var(--p);border-radius:4px;position:relative;overflow:hidden;flex-shrink:0}
+.clk::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(0,212,255,.08),transparent 60%)}
+#CT{font-family:'Orbitron',sans-serif;font-size:2.8rem;font-weight:900;color:var(--a);text-shadow:0 0 25px var(--a);line-height:1}
+#CD{font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:.18em;color:var(--s);margin-top:5px}
+#CG{font-size:.85rem;color:var(--t);margin-top:4px}
+
+.apibox{background:rgba(255,194,0,.06);border:1px solid rgba(255,194,0,.2);border-left:3px solid var(--g);border-radius:4px;padding:9px 11px;display:flex;gap:7px;align-items:center;flex-shrink:0}
+.apibox input{flex:1;background:transparent;border:none;outline:none;color:#ffe080;font-family:'Rajdhani',sans-serif;font-size:.85rem}
+.apibox input::placeholder{color:rgba(255,194,0,.35);font-size:.78rem}
+.apibox button{background:rgba(255,194,0,.15);border:1px solid var(--g);color:var(--g);font-family:'Orbitron',sans-serif;font-size:.44rem;letter-spacing:.08em;padding:6px 10px;border-radius:3px;cursor:pointer;white-space:nowrap}
+.apibox button:active{background:rgba(255,194,0,.3)}
+.apiok{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.2);border-radius:4px;padding:8px 11px;font-family:'Orbitron',sans-serif;font-size:.46rem;letter-spacing:.1em;color:var(--gr);display:none;flex-shrink:0}
+
+.qa{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;flex-shrink:0}
+.qa::-webkit-scrollbar{display:none}
+.qb{flex-shrink:0;background:rgba(0,212,255,.06);border:1px solid var(--b);color:var(--t);font-family:'Rajdhani',sans-serif;font-size:.74rem;padding:7px 11px;border-radius:4px;cursor:pointer;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:60px}
+.qb em{font-size:1.15rem;font-style:normal}
+.qb:active{border-color:var(--a);background:rgba(0,212,255,.15)}
+
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex-shrink:0}
+.dc{background:var(--p);border:1px solid var(--b);border-radius:4px;padding:10px 11px;cursor:pointer;position:relative;overflow:hidden}
+.dc:active{border-color:var(--a)}
+.dc em{font-size:1.3rem;font-style:normal;display:block;margin-bottom:4px}
+.dc h4{font-family:'Orbitron',sans-serif;font-size:.48rem;letter-spacing:.1em;color:var(--a);margin-bottom:3px}
+.dc p{font-size:.72rem;color:var(--s);line-height:1.4}
+.badge{position:absolute;top:6px;right:7px;font-family:'Orbitron',sans-serif;font-size:.36rem;letter-spacing:.07em;padding:2px 6px;border-radius:10px;border:1px solid}
+.bon{color:var(--gr);border-color:rgba(0,255,136,.35);background:rgba(0,255,136,.08)}
+.boff{color:var(--g);border-color:rgba(255,194,0,.35);background:rgba(255,194,0,.08)}
+
+.mc{background:var(--p);border:1px solid var(--b);border-left:3px solid var(--g);border-radius:4px;padding:10px 11px;flex-shrink:0}
+.mc h4{font-family:'Orbitron',sans-serif;font-size:.48rem;letter-spacing:.1em;color:var(--g);margin-bottom:6px}
+.mi{font-size:.76rem;color:var(--s);padding:3px 0;border-bottom:1px solid rgba(0,212,255,.06)}
+.mi:last-child{border:none}
+.mi b{color:var(--t)}
+
+.rc{background:var(--p);border:1px solid var(--b);border-left:3px solid var(--a);border-radius:4px;padding:10px 11px;flex-shrink:0}
+.rc h4{font-family:'Orbitron',sans-serif;font-size:.48rem;letter-spacing:.1em;color:var(--a);margin-bottom:6px}
+.ri{font-size:.75rem;color:var(--s);padding:3px 0;border-bottom:1px solid rgba(0,212,255,.06);line-height:1.4}
+.ri:last-child{border:none}
+.ri .rl{font-family:'Orbitron',sans-serif;font-size:.34rem;letter-spacing:.1em}
+.rl.u{color:var(--a2)}.rl.j{color:var(--g)}
+.ri .rt{color:var(--t)}
+
+/* CHAT */
+#vC{flex-direction:column}
+#CHAT{flex:1;overflow-y:auto;padding:11px 12px 7px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+#CHAT::-webkit-scrollbar{width:2px}
+#CHAT::-webkit-scrollbar-thumb{background:var(--a2)}
+.msg{max-width:92%;border-radius:4px;padding:9px 12px;line-height:1.6;font-size:.87rem;animation:fu .25s ease both;position:relative}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.mu{align-self:flex-end;background:rgba(0,212,255,.09);border:1px solid rgba(0,212,255,.24);border-right:3px solid var(--a);color:#d8f5ff}
+.mu::after{content:"YOU";position:absolute;top:-7px;right:8px;font-family:'Orbitron',sans-serif;font-size:.34rem;letter-spacing:.13em;color:var(--a2)}
+.mj{align-self:flex-start;background:rgba(0,25,45,.9);border:1px solid var(--b);border-left:3px solid var(--g);color:var(--t)}
+.mj::after{content:"J.A.R.V.I.S";position:absolute;top:-7px;left:8px;font-family:'Orbitron',sans-serif;font-size:.34rem;letter-spacing:.13em;color:var(--g)}
+.msg a{color:var(--a);text-decoration:none;word-break:break-word}
+
+/* STATUS BARS */
+.sb{align-self:flex-start;display:none;border-radius:4px;padding:9px 13px;border:1px solid var(--b);position:relative;margin:0 12px;flex-shrink:0}
+.sb.on{display:flex}
+#SBT{border-left:3px solid var(--g);gap:5px;align-items:center;background:rgba(0,25,45,.9)}
+#SBT::after{content:"THINKING";position:absolute;top:-7px;left:8px;font-family:'Orbitron',sans-serif;font-size:.32rem;letter-spacing:.13em;color:var(--g)}
+#SBT span{width:7px;height:7px;border-radius:50%;background:var(--a2);animation:bo 1.1s ease-in-out infinite}
+#SBT span:nth-child(2){animation-delay:.18s}
+#SBT span:nth-child(3){animation-delay:.36s}
+@keyframes bo{0%,80%,100%{transform:scale(.7);opacity:.3}40%{transform:scale(1.3);opacity:1;background:var(--a)}}
+#SBS{border-left:3px solid var(--a);gap:3px;align-items:center;background:rgba(0,25,45,.9)}
+#SBS::after{content:"SPEAKING";position:absolute;top:-7px;left:8px;font-family:'Orbitron',sans-serif;font-size:.32rem;letter-spacing:.13em;color:var(--a)}
+#SBS span{display:inline-block;width:4px;border-radius:2px;background:var(--a);animation:wv .55s ease-in-out infinite alternate}
+#SBS span:nth-child(1){height:7px}#SBS span:nth-child(2){height:16px;animation-delay:.08s}
+#SBS span:nth-child(3){height:22px;animation-delay:.16s}#SBS span:nth-child(4){height:13px;animation-delay:.24s}
+#SBS span:nth-child(5){height:20px;animation-delay:.12s}#SBS span:nth-child(6){height:9px;animation-delay:.2s}
+#SBS span:nth-child(7){height:17px;animation-delay:.04s}
+@keyframes wv{from{transform:scaleY(.4);opacity:.5}to{transform:scaleY(1.3);opacity:1}}
+#SBL{border-left:3px solid var(--r);gap:8px;align-items:center;background:rgba(255,60,60,.07);border-color:rgba(255,60,60,.3);color:var(--r);font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:.08em}
+#SBL::after{content:"LISTENING";position:absolute;top:-7px;left:8px;font-family:'Orbitron',sans-serif;font-size:.32rem;letter-spacing:.13em;color:var(--r)}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--r);animation:lp .6s ease-in-out infinite}
+@keyframes lp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.7);opacity:.3}}
+
+/* INPUT */
+.iz{flex-shrink:0;padding:7px 12px 11px;border-top:1px solid var(--b);background:rgba(2,13,20,.97)}
+.qr{display:flex;gap:5px;overflow-x:auto;padding-bottom:5px;scrollbar-width:none}
+.qr::-webkit-scrollbar{display:none}
+.cqb{flex-shrink:0;background:transparent;border:1px solid var(--b);color:var(--s);font-family:'Rajdhani',sans-serif;font-size:.7rem;padding:3px 9px;border-radius:20px;cursor:pointer;white-space:nowrap}
+.cqb:active{border-color:var(--a);color:var(--a)}
+.ir{display:flex;gap:7px;align-items:flex-end;margin-top:5px}
+#TIN{flex:1;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.22);border-radius:3px;color:var(--t);font-family:'Rajdhani',sans-serif;font-size:.9rem;padding:9px 12px;resize:none;min-height:42px;max-height:110px;outline:none;line-height:1.4}
+#TIN:focus{border-color:var(--a);box-shadow:0 0 10px rgba(0,212,255,.14)}
+#TIN::placeholder{color:var(--s)}
+#MIC{width:44px;height:44px;flex-shrink:0;background:transparent;border:1px solid var(--s);border-radius:3px;color:var(--s);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+#MIC.on{border-color:var(--r);color:var(--r);box-shadow:0 0 14px rgba(255,60,60,.4);animation:mp .65s ease-in-out infinite}
+@keyframes mp{0%,100%{opacity:1}50%{opacity:.3}}
+#SND{width:44px;height:44px;flex-shrink:0;background:transparent;border:1px solid var(--a);border-radius:3px;color:var(--a);cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center}
+#SND:active{background:rgba(0,212,255,.15)}
+#SND:disabled{opacity:.3;pointer-events:none}
+
+/* HISTORY */
+#vHi{padding:11px 12px 70px;gap:7px}
+.hihdr{display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.hitl{font-family:'Orbitron',sans-serif;font-size:.56rem;letter-spacing:.12em;color:var(--a)}
+.hiclr{background:transparent;border:1px solid rgba(255,60,60,.3);color:var(--r);font-family:'Orbitron',sans-serif;font-size:.38rem;letter-spacing:.08em;padding:3px 8px;border-radius:3px;cursor:pointer}
+.hiclr:active{background:rgba(255,60,60,.15)}
+.hiday{font-family:'Orbitron',sans-serif;font-size:.44rem;letter-spacing:.12em;color:var(--a2);padding:4px 0;border-bottom:1px solid var(--b);flex-shrink:0}
+.hib{background:var(--p);border:1px solid var(--b);border-radius:4px;padding:8px 11px;flex-shrink:0}
+.hir{font-family:'Orbitron',sans-serif;font-size:.36rem;letter-spacing:.1em;margin-bottom:3px}
+.hir.u{color:var(--a2)}.hir.j{color:var(--g)}
+.hit{font-size:.78rem;color:var(--s);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hiem{text-align:center;color:var(--s);padding:40px 20px}
+.hiem h3{font-family:'Orbitron',sans-serif;font-size:.65rem;color:var(--a2);letter-spacing:.12em;margin-bottom:8px}
+
+/* CAMERA */
+#vCam{flex-direction:column;padding:10px 12px 70px;gap:9px}
+.cam-box{position:relative;background:#000;border:1px solid var(--b);border-radius:4px;overflow:hidden;flex-shrink:0;aspect-ratio:4/3}
+#CAMVID{width:100%;height:100%;object-fit:cover;display:none}
+#CAMIMG{width:100%;height:100%;object-fit:contain;display:none}
+.cam-placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--s)}
+.cam-placeholder em{font-size:2.5rem;font-style:normal}
+.cam-placeholder p{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.12em}
+#CAMCANVAS{display:none}
+.cam-btns{display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.cbtn{flex:1;min-width:80px;background:rgba(0,212,255,.07);border:1px solid var(--b);color:var(--t);font-family:'Orbitron',sans-serif;font-size:.44rem;letter-spacing:.08em;padding:10px 8px;border-radius:4px;cursor:pointer;text-align:center;transition:.15s}
+.cbtn:active{background:rgba(0,212,255,.25);border-color:var(--a)}
+.cbtn.red{border-color:rgba(255,60,60,.3);color:var(--r)}
+.cbtn.red:active{background:rgba(255,60,60,.15)}
+.cbtn.grn{border-color:rgba(0,255,136,.3);color:var(--gr)}
+.cbtn.grn:active{background:rgba(0,255,136,.1)}
+.cam-status{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.1em;color:var(--a2);text-align:center;flex-shrink:0}
+.img-preview{border:1px solid var(--b);border-radius:4px;overflow:hidden;flex-shrink:0}
+.img-preview img{width:100%;display:block}
+.img-preview .ipcap{padding:8px 10px;font-size:.76rem;color:var(--s);font-family:'Orbitron',sans-serif;font-size:.44rem;letter-spacing:.08em}
+.img-actions{display:flex;gap:7px;flex-shrink:0}
+
+/* NAV */
+#NAV{display:flex;border-top:1px solid var(--b);background:rgba(2,13,20,.97);flex-shrink:0}
+.nb{flex:1;padding:9px 4px 7px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;border:none;background:transparent;color:var(--s);font-family:'Orbitron',sans-serif;font-size:.36rem;letter-spacing:.06em;border-top:2px solid transparent;transition:.15s}
+.nb.on{color:var(--a);border-top-color:var(--a)}
+.nb em{font-size:1.2rem;font-style:normal}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid"></div>
+<div class="orb"></div>
+
+<!-- LOCK SCREEN -->
+<div id="LOCK">
+  <div class="ll">J.<span style="color:var(--g)">A</span>.R.V.I.S<span class="ls">SECURE ACCESS</span></div>
+  <div class="lr">&#128274;</div>
+  <p id="LHINT" class="lh"><b>First time?</b> Set a 4-digit PIN. You will need it every time.</p>
+  <div id="PIN">&#x2013; &#x2013; &#x2013; &#x2013;</div>
+  <div id="LERR"></div>
+  <div class="pad">
+    <button class="pk" id="k1">1</button>
+    <button class="pk" id="k2">2</button>
+    <button class="pk" id="k3">3</button>
+    <button class="pk" id="k4">4</button>
+    <button class="pk" id="k5">5</button>
+    <button class="pk" id="k6">6</button>
+    <button class="pk" id="k7">7</button>
+    <button class="pk" id="k8">8</button>
+    <button class="pk" id="k9">9</button>
+    <button class="pk del" id="kD">&#x2715;</button>
+    <button class="pk" id="k0">0</button>
+    <button class="pk go" id="kE">&#x21B5;</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="APP">
+  <div class="hd">
+    <div class="logo">J.<span class="g">A</span>.R.V.I.S</div>
+    <div class="hdr">
+      <div class="pill"><div class="dot"></div><span id="STL">ONLINE</span></div>
+      <button class="hbtn" id="LKBTN">&#128274;</button>
+    </div>
+  </div>
+  <div class="hud">
+    <span id="HD">---</span>
+    <span id="HT">--:--:--</span>
+    <span id="HM">MEM: 0</span>
+  </div>
+
+  <div id="VIEWS">
+    <!-- HOME -->
+    <div class="vw on" id="vH">
+      <div class="clk">
+        <div id="CT">00:00</div>
+        <div id="CD">---</div>
+        <div id="CG">Good day, sir.</div>
+      </div>
+      <div class="apibox" id="APIBOX">
+        <input type="password" id="APIIN" placeholder="Anthropic API key (optional — for AI chat)"/>
+        <button id="APISAVE">LINK</button>
+      </div>
+      <div class="apiok" id="APIOK">&#x26A1; AI CHAT ACTIVE</div>
+      <div class="qa">
+        <button class="qb" id="QT"><em>&#128336;</em>Time</button>
+        <button class="qb" id="QW"><em>&#128218;</em>Wiki</button>
+        <button class="qb" id="QY"><em>&#9654;</em>YouTube</button>
+        <button class="qb" id="QM"><em>&#128506;</em>Maps</button>
+        <button class="qb" id="QV"><em>&#127908;</em>Speak</button>
+        <button class="qb" id="QWA"><em>&#128172;</em>WhatsApp</button>
+        <button class="qb" id="QMU"><em>&#127925;</em>Music</button>
+        <button class="qb" id="QMEM"><em>&#129504;</em>Memory</button>
+        <button class="qb" id="QCAM"><em>&#128247;</em>Camera</button>
+      </div>
+      <div class="dg">
+        <div class="dc" id="DC1"><em>&#128172;</em><h4>AI CHAT</h4><p>Talk to Jarvis freely</p><span class="badge boff" id="DCAI">KEY NEEDED</span></div>
+        <div class="dc" id="DC2"><em>&#128218;</em><h4>WIKIPEDIA</h4><p>Search any topic</p><span class="badge bon">FREE</span></div>
+        <div class="dc" id="DC3"><em>&#127908;</em><h4>VOICE</h4><p>Speak your command</p><span class="badge bon">ACTIVE</span></div>
+        <div class="dc" id="DC4"><em>&#129504;</em><h4>MEMORY</h4><p id="DCMD">Nothing stored</p><span class="badge bon">ON</span></div>
+        <div class="dc" id="DC5"><em>&#128241;</em><h4>DEVICE</h4><p>Open apps, call, navigate</p><span class="badge bon">ACTIVE</span></div>
+        <div class="dc" id="DC6"><em>&#128247;</em><h4>CAMERA</h4><p>Photo or live video</p><span class="badge bon">ACTIVE</span></div>
+      </div>
+      <div class="mc"><h4>&#129504; MEMORY BANK</h4><div id="MB"><div class="mi" style="font-style:italic">No memories yet. Say "my name is..." or "remember that..."</div></div></div>
+      <div class="rc"><h4>&#128220; RECENT CHATS</h4><div id="RB"><div class="ri" style="font-style:italic;color:var(--s)">No conversations yet.</div></div></div>
+    </div>
+
+    <!-- CHAT -->
+    <div class="vw" id="vC">
+      <div id="CHAT">
+        <div class="msg mj">Good day, sir. I am ready to assist. Type below, tap the mic to speak, or use the quick buttons.</div>
+      </div>
+      <div id="SBT" class="sb"><span></span><span></span><span></span></div>
+      <div id="SBS" class="sb"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div id="SBL" class="sb"><div class="pulse"></div>Listening...</div>
+      <div class="iz">
+        <div class="qr">
+          <button class="cqb" id="CQ1">&#128336; Time</button>
+          <button class="cqb" id="CQ2">&#128218; Wiki</button>
+          <button class="cqb" id="CQ3">&#9654; YouTube</button>
+          <button class="cqb" id="CQ4">&#128506; Maps</button>
+          <button class="cqb" id="CQ5">&#129504; Memory</button>
+          <button class="cqb" id="CQ6">&#128172; WhatsApp</button>
+          <button class="cqb" id="CQ7">&#127925; Music</button>
+          <button class="cqb" id="CQ8">&#128247; Camera</button>
+        </div>
+        <div class="ir">
+          <button id="MIC">&#127908;</button>
+          <textarea id="TIN" rows="1" placeholder="Type or tap mic..."></textarea>
+          <button id="SND">&#9654;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="vw" id="vHi">
+      <div class="hihdr">
+        <div class="hitl">CONVERSATION HISTORY</div>
+        <button class="hiclr" id="HICLR">CLEAR ALL</button>
+      </div>
+      <div id="HIB"><div class="hiem"><h3>NO HISTORY YET</h3>Start a conversation.</div></div>
+    </div>
+
+    <!-- CAMERA -->
+    <div class="vw" id="vCam">
+      <div class="cam-box">
+        <div class="cam-placeholder" id="CAMPLA">
+          <em>&#128247;</em>
+          <p>CAMERA INACTIVE</p>
+        </div>
+        <video id="CAMVID" autoplay playsinline muted></video>
+        <img id="CAMIMG" alt="Captured photo"/>
+        <canvas id="CAMCANVAS"></canvas>
+      </div>
+      <div class="cam-status" id="CAMST">Camera ready. Choose an option below.</div>
+      <div class="cam-btns">
+        <button class="cbtn grn" id="CAMSTART">&#9654; START CAMERA</button>
+        <button class="cbtn" id="CAMSNAP" disabled>&#128247; TAKE PHOTO</button>
+        <button class="cbtn" id="CAMFLIP" disabled>&#8635; FLIP</button>
+        <button class="cbtn red" id="CAMSTOP" disabled>&#9632; STOP</button>
+      </div>
+      <div class="cam-btns">
+        <button class="cbtn" id="CAMUP">&#128190; UPLOAD IMAGE</button>
+        <button class="cbtn" id="CAMAI" disabled>&#129504; ANALYZE WITH AI</button>
+        <button class="cbtn red" id="CAMCLEAR" disabled>&#10006; CLEAR</button>
+      </div>
+      <input type="file" id="FILIN" accept="image/*" style="display:none"/>
+      <div id="CAMPREV"></div>
+    </div>
+  </div>
+
+  <div id="NAV">
+    <button class="nb on" id="NB0"><em>&#127968;</em>HOME</button>
+    <button class="nb" id="NB1"><em>&#128172;</em>CHAT</button>
+    <button class="nb" id="NB2"><em>&#128220;</em>HISTORY</button>
+    <button class="nb" id="NB3"><em>&#128247;</em>CAMERA</button>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ======================================================
+   STORAGE — writes to both localStorage and sessionStorage
+   so it works when run as a saved file (localStorage)
+   and when previewed in Claude (sessionStorage)
+====================================================== */
+function sGet(k){
+  try{var v=localStorage.getItem(k);if(v!==null)return v;}catch(e){}
+  try{return sessionStorage.getItem(k);}catch(e){return null;}
+}
+function sSet(k,v){
+  try{localStorage.setItem(k,v);}catch(e){}
+  try{sessionStorage.setItem(k,v);}catch(e){}
+}
+
+/* ======================================================
+   STATE — all declared up top so clock never crashes
+====================================================== */
+var PIN_KEY = "jv8_pin";
+var MEM_KEY = "jv8_mem";
+var HIS_KEY = "jv8_his";
+var KEY_KEY = "jv8_key";
+
+var pinBuf = "";
+var savedPin = sGet(PIN_KEY);   // null on first run
+var setupMode = !savedPin;
+
+var MEM = {name:"", prefs:[], facts:[]};
+var LOG = [];
+var AKEY = "";
+var busy = false;
+var micObj = null;
+var micOn = false;
+var camStream = null;
+var camFacing = "environment";
+var capturedImage = null;
+var aiHist = [];
+
+/* ======================================================
+   HELPERS
+====================================================== */
+function $(id){ return document.getElementById(id); }
+function on(id, ev, fn){ $(id).addEventListener(ev, fn); }
+function show(id){ $(id).style.display = "flex"; }
+function hide(id){ $(id).style.display = "none"; }
+
+/* ======================================================
+   PIN LOCK
+====================================================== */
+function renderPin(){
+  var s = "";
+  var i;
+  for(i=0;i<pinBuf.length;i++) s+="\u25CF";
+  for(i=pinBuf.length;i<4;i++) s+="\u2013";
+  $("PIN").textContent = s.split("").join(" ");
+}
+
+function pinPress(d){
+  if(pinBuf.length >= 4) return;
+  pinBuf += d;
+  renderPin();
+  $("LERR").textContent = "";
+  if(setupMode && pinBuf.length === 4){ setTimeout(pinConfirm, 150); }
+}
+
+function pinDel(){
+  pinBuf = pinBuf.slice(0,-1);
+  renderPin();
+}
+
+function pinConfirm(){
+  if(pinBuf.length < 4){ $("LERR").textContent = "ENTER 4 DIGITS"; return; }
+  if(setupMode){
+    sSet(PIN_KEY, pinBuf);
+    savedPin = pinBuf;
+    setupMode = false;
+    doUnlock();
+  } else {
+    if(pinBuf === savedPin){
+      doUnlock();
+    } else {
+      $("LERR").textContent = "ACCESS DENIED";
+      $("PIN").style.color = "var(--r)";
+      pinBuf = "";
+      setTimeout(function(){
+        renderPin();
+        $("PIN").style.color = "var(--a)";
+      }, 700);
+    }
+  }
+}
+
+function doUnlock(){
+  $("LOCK").style.display = "none";
+  $("APP").style.display = "flex";
+  pinBuf = "";
+  renderPin();
+  loadAll();
+  setTimeout(function(){
+    var nm = MEM.name ? ", welcome back " + MEM.name : "";
+    speak("All systems online" + nm + ". Good to have you back, sir.");
+  }, 400);
+}
+
+function doLock(){
+  if(window.speechSynthesis) window.speechSynthesis.cancel();
+  stopCamera();
+  $("APP").style.display = "none";
+  $("LOCK").style.display = "flex";
+  $("LHINT").style.display = "none";
+  pinBuf = "";
+  renderPin();
+  $("LERR").textContent = "";
+}
+
+/* attach numpad */
+on("k1","click",function(){ pinPress("1"); });
+on("k2","click",function(){ pinPress("2"); });
+on("k3","click",function(){ pinPress("3"); });
+on("k4","click",function(){ pinPress("4"); });
+on("k5","click",function(){ pinPress("5"); });
+on("k6","click",function(){ pinPress("6"); });
+on("k7","click",function(){ pinPress("7"); });
+on("k8","click",function(){ pinPress("8"); });
+on("k9","click",function(){ pinPress("9"); });
+on("k0","click",function(){ pinPress("0"); });
+on("kD","click",pinDel);
+on("kE","click",pinConfirm);
+on("LKBTN","click",doLock);
+
+/* ======================================================
+   CLOCK
+====================================================== */
+function greet(h){
+  if(h<12) return "Good morning, sir.";
+  if(h<17) return "Good afternoon, sir.";
+  return "Good evening, sir.";
+}
+
+function tick(){
+  var n = new Date();
+  var H = String(n.getHours()).padStart(2,"0");
+  var Mi = String(n.getMinutes()).padStart(2,"0");
+  var S = String(n.getSeconds()).padStart(2,"0");
+  $("HT").textContent = H+":"+Mi+":"+S;
+  var ds = n.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+  $("HD").textContent = ds;
+  $("CT").textContent = H+":"+Mi;
+  $("CD").textContent = n.toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+  var g = greet(n.getHours());
+  $("CG").textContent = MEM.name ? g.replace(", sir.","")+", "+MEM.name+"." : g;
+}
+setInterval(tick, 1000);
+tick();
+
+function nowStr(){
+  return new Date().toLocaleString("en-US",{
+    weekday:"long",year:"numeric",month:"long",day:"numeric",
+    hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:true
+  });
+}
+
+/* ======================================================
+   MEMORY
+====================================================== */
+function loadMem(){
+  try{
+    var s = sGet(MEM_KEY);
+    if(s){ var m = JSON.parse(s); MEM.name=m.name||""; MEM.prefs=m.prefs||[]; MEM.facts=m.facts||[]; }
+  }catch(e){}
+}
+
+function saveMem(){
+  sSet(MEM_KEY, JSON.stringify(MEM));
+  var tot = (MEM.name?1:0) + MEM.prefs.length + MEM.facts.length;
+  $("HM").textContent = "MEM: "+tot;
+  renderMemCard();
+}
+
+function renderMemCard(){
+  var h = "";
+  var i;
+  if(MEM.name) h += '<div class="mi"><b>Name:</b> '+MEM.name+'</div>';
+  for(i=Math.max(0,MEM.prefs.length-3);i<MEM.prefs.length;i++)
+    h += '<div class="mi"><b>Pref:</b> '+MEM.prefs[i]+'</div>';
+  for(i=Math.max(0,MEM.facts.length-3);i<MEM.facts.length;i++)
+    h += '<div class="mi"><b>Fact:</b> '+MEM.facts[i]+'</div>';
+  if(!h) h = '<div class="mi" style="font-style:italic">No memories yet.</div>';
+  $("MB").innerHTML = h;
+  var tot = (MEM.name?1:0)+MEM.prefs.length+MEM.facts.length;
+  $("DCMD").textContent = tot ? tot+" item"+(tot>1?"s":"")+" stored" : "Nothing stored";
+}
+
+function procMem(text){
+  var m;
+  m = text.match(/my name is ([A-Za-z]+)/i);
+  if(m){ MEM.name=m[1]; saveMem(); return "Got it, I will remember your name is "+m[1]+", sir."; }
+  m = text.match(/^(remember|note|save|store)\s+(that\s+)?(.+)/i);
+  if(m){ var f=m[3].trim(); if(MEM.facts.indexOf(f)<0){MEM.facts.push(f); if(MEM.facts.length>30)MEM.facts.shift();} saveMem(); return "Noted, sir: "+f; }
+  m = text.match(/^I (like|love|enjoy|prefer|hate|dislike)\s+(.+)/i);
+  if(m){ var p=m[1]+" "+m[2].trim(); if(MEM.prefs.indexOf(p)<0){MEM.prefs.push(p); if(MEM.prefs.length>20)MEM.prefs.shift();} saveMem(); return "Noted, I will remember you "+p+", sir."; }
+  return null;
+}
+
+function queryMem(text){
+  if(/(what.*remember|what.*know.*me|my (name|pref|fact))/i.test(text)){
+    var parts=[];
+    if(MEM.name) parts.push("Name: "+MEM.name);
+    if(MEM.prefs.length) parts.push("Preferences: "+MEM.prefs.join(", "));
+    if(MEM.facts.length) parts.push("Facts:\n"+MEM.facts.map(function(f){return"- "+f;}).join("\n"));
+    if(!parts.length) return "Nothing stored yet, sir. Say my name is or remember that to add memories.";
+    return "Here is what I have on file, sir:\n\n"+parts.join("\n\n");
+  }
+  if(/(forget|clear|wipe|delete).*(memory|everything)/i.test(text)){
+    MEM={name:"",prefs:[],facts:[]}; saveMem();
+    return "Memory wiped clean, sir.";
+  }
+  return null;
+}
+
+function memCtx(){
+  var p=[];
+  if(MEM.name) p.push("Name: "+MEM.name);
+  if(MEM.prefs.length) p.push("Preferences: "+MEM.prefs.join(", "));
+  if(MEM.facts.length) p.push("Facts: "+MEM.facts.join(". "));
+  return p.join("\n");
+}
+
+/* ======================================================
+   CHAT LOG
+====================================================== */
+function loadLog(){
+  try{ var s=sGet(HIS_KEY); if(s) LOG=JSON.parse(s); }catch(e){ LOG=[]; }
+}
+
+function saveLog(){
+  if(LOG.length>200) LOG=LOG.slice(-200);
+  sSet(HIS_KEY, JSON.stringify(LOG));
+}
+
+function addLog(role, text){
+  LOG.push({role:role, text:text, time:new Date().toISOString()});
+  saveLog();
+  renderRecent();
+}
+
+function renderRecent(){
+  var rec = LOG.slice(-6).reverse();
+  if(!rec.length){ $("RB").innerHTML='<div class="ri" style="font-style:italic;color:var(--s)">No conversations yet.</div>'; return; }
+  var h="";
+  rec.forEach(function(e){
+    var l=e.role==="user"?"YOU":"JARVIS";
+    var c=e.role==="user"?"u":"j";
+    var t=(e.text+"").replace(/<[^>]+>/g,"").substring(0,80);
+    h+='<div class="ri"><div class="rl '+c+'">'+l+'</div><div class="rt">'+t+'</div></div>';
+  });
+  $("RB").innerHTML=h;
+}
+
+function renderHistory(){
+  if(!LOG.length){ $("HIB").innerHTML='<div class="hiem"><h3>NO HISTORY YET</h3>Start a conversation.</div>'; return; }
+  var days={};
+  LOG.slice().reverse().forEach(function(e){
+    var d=new Date(e.time).toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+    if(!days[d]) days[d]=[];
+    days[d].push(e);
+  });
+  var h="";
+  Object.keys(days).forEach(function(day){
+    h+='<div class="hiday">'+day+'</div>';
+    days[day].forEach(function(e){
+      var c=e.role==="user"?"u":"j";
+      var l=e.role==="user"?"YOU":"J.A.R.V.I.S";
+      var t=(e.text+"").replace(/<[^>]+>/g,"").substring(0,100);
+      h+='<div class="hib"><div class="hir '+c+'">'+l+'</div><div class="hit">'+t+'</div></div>';
+    });
+  });
+  $("HIB").innerHTML=h;
+}
+
+function clearHistory(){
+  if(!window.confirm("Clear all conversation history?")) return;
+  LOG=[]; saveLog();
+  $("CHAT").innerHTML='<div class="msg mj">History cleared, sir. Ready for new commands.</div>';
+  renderHistory(); renderRecent();
+}
+
+/* ======================================================
+   VIEW SWITCHING
+====================================================== */
+var views = ["vH","vC","vHi","vCam"];
+var navs  = ["NB0","NB1","NB2","NB3"];
+
+function switchView(i){
+  views.forEach(function(v){ $(v).classList.remove("on"); });
+  navs.forEach(function(n){ $(n).classList.remove("on"); });
+  $(views[i]).classList.add("on");
+  $(navs[i]).classList.add("on");
+  if(i===2) renderHistory();
+  if(i===0){ renderMemCard(); renderRecent(); }
+  if(i!==3) stopCamera();
+}
+
+on("NB0","click",function(){ switchView(0); });
+on("NB1","click",function(){ switchView(1); });
+on("NB2","click",function(){ switchView(2); });
+on("NB3","click",function(){ switchView(3); });
+on("HICLR","click",clearHistory);
+
+/* ======================================================
+   DEVICE CONTROL
+====================================================== */
+var APPS = {
+  "youtube":"https://m.youtube.com","google":"https://www.google.com",
+  "maps":"https://maps.google.com","google maps":"https://maps.google.com",
+  "whatsapp":"https://wa.me","instagram":"https://www.instagram.com",
+  "twitter":"https://mobile.twitter.com","facebook":"https://m.facebook.com",
+  "gmail":"https://mail.google.com","netflix":"https://www.netflix.com",
+  "spotify":"https://open.spotify.com","amazon":"https://www.amazon.com",
+  "news":"https://news.google.com","weather":"https://weather.com",
+  "translate":"https://translate.google.com","snapchat":"https://www.snapchat.com",
+  "calculator":"https://www.google.com/search?q=calculator",
+  "linkedin":"https://www.linkedin.com"
+};
+
+function handleDevice(text){
+  var s=text.toLowerCase().trim(), m, k, keys, i;
+  m=s.match(/^(open|launch|go to|show me|start)\s+(.+)/);
+  if(m){
+    var tg=m[2].trim();
+    keys=Object.keys(APPS);
+    for(i=0;i<keys.length;i++){ if(tg.indexOf(keys[i])>=0){ window.open(APPS[keys[i]],"_blank"); return "Opening "+keys[i]+", sir."; } }
+    window.open("https://www.google.com/search?q="+encodeURIComponent(tg),"_blank");
+    return "Searching for "+tg+", sir.";
+  }
+  m=s.match(/^play\s+(.+)/);
+  if(m){ window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(m[1]),"_blank"); return "Searching YouTube for "+m[1]+", sir."; }
+  m=s.match(/^(call|dial|ring)\s+(.+)/);
+  if(m){ var num=m[2].replace(/\D/g,""); if(num.length>=7){window.location.href="tel:"+num; return "Dialling "+m[2]+", sir.";} return "I need a valid number, sir."; }
+  m=s.match(/^(navigate|directions?)\s+to\s+(.+)/);
+  if(m){ window.open("https://maps.google.com/maps?q="+encodeURIComponent(m[2]),"_blank"); return "Opening directions to "+m[2]+", sir."; }
+  m=s.match(/set\s+(an?\s+)?(alarm|reminder)\s*(for\s+)?(.+)/);
+  if(m){ return "Alarm noted for "+m[4]+", sir. Your device clock app handles native alarms."; }
+  m=s.match(/^(search|find|google)\s+(.+)/);
+  if(m){ window.open("https://www.google.com/search?q="+encodeURIComponent(m[2]),"_blank"); return "Searching for "+m[2]+", sir."; }
+  return null;
+}
+
+/* ======================================================
+   WIKIPEDIA
+====================================================== */
+function wikiSearch(query){
+  var q=encodeURIComponent(query.trim());
+  var title=null;
+  function tj(url){ return fetch(url).then(function(r){return r.ok?r.json():Promise.reject();}).catch(function(){return null;}); }
+  return tj("https://en.wikipedia.org/w/api.php?action=opensearch&search="+q+"&limit=1&format=json&origin=*")
+    .then(function(d){
+      if(d&&Array.isArray(d)&&d[1]&&d[1][0]) title=d[1][0];
+      if(title) return null;
+      return tj("https://corsproxy.io/?"+encodeURIComponent("https://en.wikipedia.org/w/api.php?action=opensearch&search="+q+"&limit=1&format=json"));
+    })
+    .then(function(d){
+      if(d&&Array.isArray(d)&&d[1]&&d[1][0]) title=d[1][0];
+      if(!title) return null;
+      var te=encodeURIComponent(title);
+      return tj("https://en.wikipedia.org/api/rest_v1/page/summary/"+te)
+        .then(function(d2){
+          if(d2&&d2.extract&&d2.type!=="disambiguation") return d2;
+          return tj("https://api.allorigins.win/get?url="+encodeURIComponent("https://en.wikipedia.org/api/rest_v1/page/summary/"+te))
+            .then(function(o){
+              if(!o) return null;
+              try{var d3=JSON.parse(o.contents);if(d3&&d3.extract)return d3;}catch(e){}
+              return null;
+            });
+        });
+    })
+    .then(function(r){
+      if(!r||!r.extract) return null;
+      return {title:r.title, extract:r.extract,
+        url:(r.content_urls&&r.content_urls.desktop&&r.content_urls.desktop.page)||("https://en.wikipedia.org/wiki/"+encodeURIComponent(title))};
+    })
+    .catch(function(){return null;});
+}
+
+/* ======================================================
+   INTENT
+====================================================== */
+function intent(text){
+  var s=text.toLowerCase();
+  if(/\b(time|date|day|today|now|clock)\b/.test(s)) return "dt";
+  if(/^(wiki(pedia)?\s*:)/.test(s)) return "wiki";
+  if(/^(who (is|was|are|were)|what (is|are|was|were)|tell me about|explain|define|look up)\b/.test(s)) return "wiki_i";
+  if(/^(open|launch|go to|show me|start|play|call|dial|ring|navigate|directions?|search|find|google|set\s+alarm|set\s+reminder)\b/i.test(s)) return "device";
+  if(/^(remember|note|save|store|my name is|i (like|love|enjoy|prefer|hate|dislike))\b/i.test(s)) return "mem_s";
+  if(/(what.*remember|what.*know.*me|my (name|pref|fact)|clear memory|wipe memory|forget everything)/i.test(s)) return "mem_g";
+  if(/\b(camera|photo|picture|take photo|open camera|live video|video)\b/i.test(s)) return "cam";
+  return "ai";
+}
+
+/* ======================================================
+   API KEY
+====================================================== */
+function saveKey(){
+  var v=($("APIIN").value||"").trim();
+  if(!v||v.indexOf("sk-")!==0){ alert("Invalid key. Must start with sk-"); return; }
+  AKEY=v; sSet(KEY_KEY,v);
+  $("APIBOX").style.display="none";
+  $("APIOK").style.display="flex";
+  $("DCAI").textContent="ACTIVE";
+  $("DCAI").className="badge bon";
+  jarvis("Full AI chat unlocked, sir. All systems nominal.");
+}
+on("APISAVE","click",saveKey);
+
+/* ======================================================
+   UI HELPERS
+====================================================== */
+function fmt(t){
+  return (t+"")
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/\*\*(.*?)\*\*/g,"<strong>$1</strong>")
+    .replace(/\n/g,"<br>");
+}
+
+function addMsg(cls, html){
+  var d=document.createElement("div");
+  d.className="msg "+cls;
+  d.innerHTML=html;
+  $("CHAT").appendChild(d);
+  $("CHAT").scrollTop=9999;
+}
+
+function jarvis(text){
+  addMsg("mj",fmt(text));
+  addLog("jarvis",text);
+  speak(text);
+}
+
+function setSt(s){ $("STL").textContent=s; }
+function showSB(id){ $(id).classList.add("on"); $("CHAT").scrollTop=9999; }
+function hideSB(id){ $(id).classList.remove("on"); }
+
+function rsz(el){ el.style.height="auto"; el.style.height=Math.min(el.scrollHeight,110)+"px"; }
+
+on("TIN","keydown",function(e){ if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();go();} });
+on("TIN","input",function(){ rsz(this); });
+on("SND","click",go);
+on("MIC","click",toggleMic);
+
+/* quick buttons — chat view */
+var CQS = [
+  ["CQ1","What is the current date and time?"],
+  ["CQ2","wikipedia: Artificial Intelligence"],
+  ["CQ3","open YouTube"],
+  ["CQ4","open Google Maps"],
+  ["CQ5","what do you remember about me"],
+  ["CQ6","open WhatsApp"],
+  ["CQ7","play Bollywood music"],
+  ["CQ8","open camera"]
+];
+CQS.forEach(function(pair){
+  on(pair[0],"click",function(){ qs(pair[1]); });
+});
+
+/* home quick actions */
+on("QT","click",function(){ switchView(1); qs("What is the current date and time?"); });
+on("QW","click",function(){ switchView(1); qs("wikipedia: Iron Man"); });
+on("QY","click",function(){ switchView(1); qs("open YouTube"); });
+on("QM","click",function(){ switchView(1); qs("open Google Maps"); });
+on("QV","click",function(){ switchView(1); setTimeout(toggleMic,300); });
+on("QWA","click",function(){ switchView(1); qs("open WhatsApp"); });
+on("QMU","click",function(){ switchView(1); qs("play Bollywood music"); });
+on("QMEM","click",function(){ switchView(1); qs("what do you remember about me"); });
+on("QCAM","click",function(){ switchView(3); });
+
+/* home cards */
+on("DC1","click",function(){ switchView(1); });
+on("DC2","click",function(){ switchView(1); qs("wikipedia: Virat Kohli"); });
+on("DC3","click",function(){ switchView(1); setTimeout(toggleMic,300); });
+on("DC4","click",function(){ switchView(1); qs("what do you remember about me"); });
+on("DC5","click",function(){ switchView(1); qs("open YouTube"); });
+on("DC6","click",function(){ switchView(3); });
+
+function qs(text){
+  switchView(1);
+  $("TIN").value=text;
+  go();
+}
+
+/* ======================================================
+   MAIN HANDLER
+====================================================== */
+function go(){
+  if(busy) return;
+  var el=$("TIN");
+  var raw=el.value.trim();
+  if(!raw) return;
+  el.value=""; el.style.height="auto";
+  addMsg("mu",fmt(raw));
+  addLog("user",raw);
+  busy=true; $("SND").disabled=true; setSt("PROCESSING"); showSB("SBT");
+
+  var it=intent(raw);
+
+  function done(){ busy=false; $("SND").disabled=false; setSt("ONLINE"); hideSB("SBT"); }
+
+  if(it==="dt"){
+    done(); jarvis("The current date and time is "+nowStr()+", sir.");
+
+  } else if(it==="cam"){
+    done(); switchView(3); jarvis("Opening camera, sir.");
+
+  } else if(it==="mem_s"){
+    var mr=procMem(raw); done(); jarvis(mr||"Noted, sir.");
+
+  } else if(it==="mem_g"){
+    var mg=queryMem(raw); done(); jarvis(mg);
+
+  } else if(it==="device"){
+    var dr=handleDevice(raw); done(); jarvis(dr||"I will handle that, sir.");
+
+  } else if(it==="wiki"){
+    var wq=raw.replace(/^(wiki(pedia)?\s*:\s*)/i,"").trim();
+    wikiSearch(wq).then(function(r){
+      done();
+      if(r){
+        addMsg("mj","<strong>"+fmt(r.title)+"</strong> &mdash; "+fmt(r.extract)+"<br><br>&#128218; <a href='"+r.url+"' target='_blank'>Full article</a>");
+        addLog("jarvis",r.title+" - "+r.extract);
+        speak(r.title+". "+r.extract);
+      } else { jarvis("I could not find that on Wikipedia, sir."); }
+    }).catch(function(){ done(); jarvis("Wikipedia search failed, sir. Check your connection."); });
+
+  } else if(it==="wiki_i"){
+    var subj=raw.replace(/^(who (is|was|are|were)|what (is|are|was|were)|tell me about|explain|define|look up)\s+/i,"").replace(/[?!.]+$/,"").trim();
+    wikiSearch(subj).then(function(r){
+      if(r&&r.extract&&r.extract.length>50){
+        done();
+        addMsg("mj","<strong>"+fmt(r.title)+"</strong> &mdash; "+fmt(r.extract)+"<br><br>&#128218; <a href='"+r.url+"' target='_blank'>Full article</a>");
+        addLog("jarvis",r.title+" - "+r.extract);
+        speak(r.title+". "+r.extract);
+      } else if(AKEY){
+        callAI(raw).then(done).catch(function(){ done(); jarvis("Something went wrong, sir. Please try again."); });
+      } else {
+        done();
+        jarvis(r&&r.extract ? r.title+" - "+r.extract : "Could not find that on Wikipedia, sir. Add an API key for broader AI answers.");
+      }
+    }).catch(function(){ done(); jarvis("Wikipedia search failed, sir."); });
+
+  } else {
+    if(!AKEY){ done(); jarvis("For free-form AI conversation I need an API key, sir. Memory, Wikipedia, device control, date, voice and camera all work without one. Add your key on the Home tab."); }
+    else { callAI(raw).then(done).catch(function(){ done(); jarvis("Something went wrong, sir. Please try again."); }); }
+  }
+}
+
+/* ======================================================
+   AI CALL
+====================================================== */
+function callAI(text){
+  aiHist.push({role:"user",content:text});
+  var sys="You are J.A.R.V.I.S. (Just A Rather Very Intelligent System), Tony Stark's AI assistant. Calm authority, dry wit. Address user as sir or by name if known. Be concise. Current time: "+nowStr()+"."+(memCtx()?"\nUser info:\n"+memCtx():"");
+  return fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":AKEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1024,system:sys,tools:[{type:"web_search_20250305",name:"web_search"}],messages:aiHist})
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error) throw new Error(d.error.message);
+    var reply=(d.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("\n")||"I am afraid something went wrong, sir.";
+    aiHist.push({role:"assistant",content:d.content});
+    hideSB("SBT");
+    addMsg("mj",fmt(reply));
+    addLog("jarvis",reply);
+    speak(reply);
+    procMem(text);
+  });
+}
+
+/* ======================================================
+   TEXT-TO-SPEECH
+====================================================== */
+var ttsV=[];
+if(window.speechSynthesis){
+  window.speechSynthesis.onvoiceschanged=function(){ ttsV=window.speechSynthesis.getVoices(); };
+  ttsV=window.speechSynthesis.getVoices();
+}
+
+function speak(raw){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var text=(raw+"").replace(/<[^>]+>/g,"").replace(/https?:\/\/\S+/g,"").replace(/\*\*/g,"").replace(/\n/g," ").trim();
+  if(!text) return;
+  window.speechSynthesis.resume();
+  var u=new SpeechSynthesisUtterance(text);
+  u.rate=0.88; u.pitch=0.80; u.volume=1.0; u.lang="en-GB";
+  var voices=window.speechSynthesis.getVoices();
+  var v=null, i;
+  for(i=0;i<voices.length;i++){ var n=voices[i].name.toLowerCase(); if(n.indexOf("daniel")>=0||n.indexOf("google uk english male")>=0){v=voices[i];break;} }
+  if(!v) for(i=0;i<voices.length;i++){ if(voices[i].lang==="en-GB"){v=voices[i];break;} }
+  if(!v) for(i=0;i<voices.length;i++){ if(voices[i].lang.indexOf("en")===0){v=voices[i];break;} }
+  if(v) u.voice=v;
+  u.onstart=function(){ showSB("SBS"); };
+  u.onend=function(){ hideSB("SBS"); };
+  u.onerror=function(){ hideSB("SBS"); };
+  setTimeout(function(){ window.speechSynthesis.speak(u); },100);
+}
+
+/* ======================================================
+   SPEECH RECOGNITION
+====================================================== */
+function toggleMic(){
+  var btn=$("MIC");
+  if(micOn){
+    if(micObj){ try{micObj.abort();}catch(e){} }
+    micOn=false; btn.classList.remove("on"); hideSB("SBL"); setSt("ONLINE");
+    return;
+  }
+  if(window.speechSynthesis){window.speechSynthesis.cancel(); hideSB("SBS");}
+  var SR=window.webkitSpeechRecognition||window.SpeechRecognition;
+  if(!SR){ jarvis("Voice recognition requires Chrome browser, sir."); return; }
+  micObj=new SR();
+  micObj.lang="en-US"; micObj.continuous=false; micObj.interimResults=false; micObj.maxAlternatives=1;
+  micObj.onstart=function(){ micOn=true; btn.classList.add("on"); setSt("LISTENING"); showSB("SBL"); };
+  micObj.onspeechend=function(){ try{micObj.stop();}catch(e){} };
+  micObj.onresult=function(e){
+    var t=e.results[0][0].transcript.trim();
+    micOn=false; btn.classList.remove("on"); hideSB("SBL"); setSt("ONLINE");
+    if(t){ $("TIN").value=t; go(); }
+  };
+  micObj.onerror=function(e){
+    micOn=false; btn.classList.remove("on"); hideSB("SBL"); setSt("ONLINE");
+    if(e.error==="not-allowed") jarvis("Microphone access denied, sir. Please allow it in Chrome settings.");
+    else if(e.error!=="aborted"&&e.error!=="no-speech") jarvis("Voice error: "+e.error+". Please try again, sir.");
+  };
+  micObj.onend=function(){ micOn=false; btn.classList.remove("on"); hideSB("SBL"); if($("STL").textContent==="LISTENING") setSt("ONLINE"); };
+  try{micObj.start();}catch(e){ micOn=false; btn.classList.remove("on"); hideSB("SBL"); jarvis("Could not start microphone, sir. Tap again."); }
+}
+
+/* ======================================================
+   CAMERA
+====================================================== */
+function setCamSt(msg){ $("CAMST").textContent=msg; }
+
+function setCamBtns(streaming, hasImage){
+  $("CAMSTART").disabled = streaming;
+  $("CAMSNAP").disabled  = !streaming;
+  $("CAMFLIP").disabled  = !streaming;
+  $("CAMSTOP").disabled  = !streaming;
+  $("CAMAI").disabled    = !hasImage;
+  $("CAMCLEAR").disabled = !hasImage;
+}
+
+function startCamera(){
+  if(camStream) stopCamera();
+  var constraints = {video:{facingMode:camFacing}, audio:false};
+  navigator.mediaDevices.getUserMedia(constraints).then(function(stream){
+    camStream=stream;
+    var vid=$("CAMVID");
+    vid.srcObject=stream;
+    vid.style.display="block";
+    $("CAMPLA").style.display="none";
+    $("CAMIMG").style.display="none";
+    setCamSt("Live camera active. Tap TAKE PHOTO to capture.");
+    setCamBtns(true,false);
+  }).catch(function(err){
+    setCamSt("Camera error: "+err.message+". Please allow camera access.");
+  });
+}
+
+function stopCamera(){
+  if(camStream){
+    camStream.getTracks().forEach(function(t){t.stop();});
+    camStream=null;
+  }
+  var vid=$("CAMVID");
+  vid.srcObject=null;
+  vid.style.display="none";
+  if(!capturedImage) $("CAMPLA").style.display="flex";
+  setCamBtns(false, !!capturedImage);
+  if(!capturedImage) setCamSt("Camera stopped.");
+}
+
+function takePhoto(){
+  var vid=$("CAMVID");
+  if(!camStream||!vid.videoWidth) return;
+  var canvas=$("CAMCANVAS");
+  canvas.width=vid.videoWidth;
+  canvas.height=vid.videoHeight;
+  var ctx=canvas.getContext("2d");
+  ctx.drawImage(vid,0,0);
+  capturedImage=canvas.toDataURL("image/jpeg",0.9);
+  var img=$("CAMIMG");
+  img.src=capturedImage;
+  img.style.display="block";
+  $("CAMPLA").style.display="none";
+  stopCamera();
+  setCamSt("Photo captured! Tap ANALYZE WITH AI to analyze it.");
+  setCamBtns(false,true);
+}
+
+function flipCamera(){
+  camFacing = camFacing==="environment" ? "user" : "environment";
+  startCamera();
+}
+
+function clearCamera(){
+  capturedImage=null;
+  $("CAMIMG").style.display="none";
+  $("CAMPLA").style.display="flex";
+  $("CAMPREV").innerHTML="";
+  setCamSt("Camera cleared. Ready.");
+  setCamBtns(false,false);
+}
+
+function uploadImage(){
+  $("FILIN").click();
+}
+
+function analyzeImage(){
+  if(!capturedImage){ jarvis("No image to analyze, sir."); return; }
+  if(!AKEY){ jarvis("I need an API key to analyze images, sir. Please add your Anthropic key on the Home tab."); return; }
+  setCamSt("Analyzing image with AI...");
+  $("CAMAI").disabled=true;
+  var b64=capturedImage.split(",")[1];
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":AKEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",max_tokens:1024,
+      system:"You are J.A.R.V.I.S., Tony Stark's AI. Analyze images concisely and helpfully. Address user as sir.",
+      messages:[{role:"user",content:[
+        {type:"image",source:{type:"base64",media_type:"image/jpeg",data:b64}},
+        {type:"text",text:"Analyze this image and tell me what you see, sir."}
+      ]}]
+    })
+  }).then(function(r){return r.json();}).then(function(d){
+    if(d.error) throw new Error(d.error.message);
+    var reply=(d.content||[]).filter(function(b){return b.type==="text";}).map(function(b){return b.text;}).join("\n")||"Unable to analyze image.";
+    setCamSt("Analysis complete.");
+    $("CAMAI").disabled=false;
+    switchView(1);
+    jarvis("Image analysis complete, sir:\n\n"+reply);
+  }).catch(function(e){
+    setCamSt("Analysis failed: "+e.message);
+    $("CAMAI").disabled=false;
+  });
+}
+
+on("CAMSTART","click",startCamera);
+on("CAMSNAP","click",takePhoto);
+on("CAMFLIP","click",flipCamera);
+on("CAMSTOP","click",stopCamera);
+on("CAMUP","click",uploadImage);
+on("CAMAI","click",analyzeImage);
+on("CAMCLEAR","click",clearCamera);
+
+on("FILIN","change",function(){
+  var file=this.files[0];
+  if(!file) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    capturedImage=e.target.result;
+    var img=$("CAMIMG");
+    img.src=capturedImage;
+    img.style.display="block";
+    $("CAMPLA").style.display="none";
+    stopCamera();
+    setCamSt("Image uploaded. Tap ANALYZE WITH AI to analyze it.");
+    setCamBtns(false,true);
+  };
+  reader.readAsDataURL(file);
+});
+
+/* ======================================================
+   LOAD ALL ON UNLOCK
+====================================================== */
+function loadAll(){
+  loadMem(); loadLog();
+  var k=sGet(KEY_KEY);
+  if(k&&k.indexOf("sk-")===0){
+    AKEY=k;
+    $("APIBOX").style.display="none";
+    $("APIOK").style.display="flex";
+    $("DCAI").textContent="ACTIVE";
+    $("DCAI").className="badge bon";
+  }
+  renderMemCard(); renderRecent();
+  var tot=(MEM.name?1:0)+MEM.prefs.length+MEM.facts.length;
+  $("HM").textContent="MEM: "+tot;
+  tick();
+}
+
+})();
+</script>
+</body>
+</html>
